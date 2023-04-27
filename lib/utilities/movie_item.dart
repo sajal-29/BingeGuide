@@ -1,22 +1,10 @@
-import 'package:binge_guide/utilities/movieHolder.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../provider/favorite.dart';
 
-class movieHolder extends StatefulWidget {
-  String title;
-  var rating;
-  String image;
+class MovItem extends StatelessWidget {
+  final movieItem item;
 
-  movieHolder({required this.title, required this.rating, required this.image});
-
-  @override
-  State<movieHolder> createState() => _movieHolderState();
-}
-
-class _movieHolderState extends State<movieHolder> {
-  bool isFavorite = false;
-
+  MovItem(this.item);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,7 +38,7 @@ class _movieHolderState extends State<movieHolder> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(25), topRight: Radius.circular(25)),
             image: DecorationImage(
-                image: NetworkImage(widget.image), fit: BoxFit.fill),
+                image: NetworkImage(item.imageUrl), fit: BoxFit.fill),
           ),
         ),
         Container(
@@ -58,7 +46,7 @@ class _movieHolderState extends State<movieHolder> {
           padding: EdgeInsets.only(left: 5, top: 5),
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Color(0xFFFFABAB).withOpacity(0.7),
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(25),
                 bottomRight: Radius.circular(25)),
@@ -70,7 +58,7 @@ class _movieHolderState extends State<movieHolder> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Rating : ' + widget.rating.toString(),
+                    'Rating : ' + item.rating.toString(),
                     style: TextStyle(
                         color: Color(0xFFD27685),
                         fontFamily: 'Montserrat',
@@ -88,7 +76,7 @@ class _movieHolderState extends State<movieHolder> {
                       minWidth: 10,
                     ),
                     child: Text(
-                      'Title : ' + widget.title,
+                      'Title : ' + item.name,
                       style: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Montserrat',
@@ -97,24 +85,7 @@ class _movieHolderState extends State<movieHolder> {
                     ),
                   ),
                 ],
-              ),
-              ElevatedButton(
-                  style: ButtonStyle(
-                      elevation: MaterialStatePropertyAll(0),
-                      backgroundColor:
-                          MaterialStatePropertyAll(Colors.transparent)),
-                  onPressed: () {
-                    Provider.of<favoriteProvider>(context, listen: false)
-                        .addMovie(widget.title, widget.rating, widget.image);
-                    setState(() {
-                      isFavorite = !isFavorite;
-                    });
-                  },
-                  child: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: Color(0xFF9E4784),
-                    size: 30,
-                  )),
+              )
             ],
           ),
         ),

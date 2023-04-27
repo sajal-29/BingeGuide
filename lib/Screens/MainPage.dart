@@ -1,38 +1,52 @@
 import 'package:binge_guide/Screens/Introduction.dart';
-import 'package:binge_guide/Screens/SearchScreen.dart';
+import 'package:binge_guide/Screens/SearchMovie.dart';
+import 'package:binge_guide/Screens/SearchSeries.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import '../auth.dart';
+import 'favoritesScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class MainPage extends StatelessWidget {
+  final User? user = Auth().currentuser;
 
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
+  Future<void> signOut() async {
+    await Auth().signOut();
+  }
 
-class _MainPageState extends State<MainPage> {
+  Widget _title() {
+    return const Text('Firebase Auth');
+  }
+
+  Widget _userId() {
+    return Text(user?.email ?? 'User email');
+  }
+
+  Widget _signOutButton() {
+    return ElevatedButton(onPressed: signOut, child: Text('Sign Out'));
+  }
+
   final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
     return Scaffold(
+      // extendBody: true,
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        foregroundColor: Colors.white,
-        toolbarHeight: 50,
+        foregroundColor: Theme.of(context).primaryColorDark,
+        toolbarHeight: 60,
         shadowColor: Colors.transparent,
         elevation: 0,
         backgroundColor: Colors.transparent,
         // centerTitle: true,
       ),
       drawer: Drawer(
-        shape: Border(right: BorderSide(width: 1, color: Color(0xFFFFA31A))),
+        shape: Border(right: BorderSide(width: 1, color: Color(0xFFD27685))),
         key: _globalKey,
-        backgroundColor: Colors.black,
+        backgroundColor: Theme.of(context).primaryColorDark,
         child: ListView(
           // ignore: prefer_const_literals_to_create_immutables
           children: [
@@ -44,41 +58,54 @@ class _MainPageState extends State<MainPage> {
                 'Hi There! Welcome to BingeGuide :)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Color(0xFFFFA31A),
+                    color: Theme.of(context).accentColor,
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Montserrat'),
               ),
             ),
-            const ListTile(
-              leading: Icon(Icons.favorite, color: Colors.red),
+            ListTile(
+              leading: Icon(Icons.favorite, color: Color(0xFF9E4784)),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: ((context) {
+                  return FavScreen();
+                })));
+              },
               title: Text(
                 'Favourites',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
-                    color: Color(0xFFFFA31A)),
-              ),
-            ),
-            const ListTile(
-              leading: Icon(
-                Icons.lightbulb,
-                color: Colors.yellow,
-              ),
-              title: Text(
-                'History',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Color(0xFFFFA31A)),
+                    color: Color(0xFFD27685)),
               ),
             ),
             SizedBox(
-              height: 40,
+              height: 500,
+            ),
+            ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(Color(0xFFFFABAB)),
+                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.black, width: 2),
+                      borderRadius: BorderRadius.all(Radius.circular(10)))),
+                ),
+                onPressed: () {
+                  signOut();
+                },
+                child: Text(
+                  'Sign Out',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                )),
+            SizedBox(
+              height: 20,
             ),
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Color(0xFFFFA31A)),
+                backgroundColor: MaterialStatePropertyAll(Color(0xFFFFABAB)),
                 shape: MaterialStatePropertyAll(RoundedRectangleBorder(
                     side: BorderSide(color: Colors.black, width: 2),
                     borderRadius: BorderRadius.all(Radius.circular(10)))),
@@ -100,24 +127,35 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       ),
-      body: Container(
-        padding: EdgeInsets.only(top: 20),
-        // color: Colors.white,
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage('assets/background.png'),
-          fit: BoxFit.fill,
-        )),
-        child: SingleChildScrollView(
-          // padding: const EdgeInsets.only(top: 50),
+      body: SingleChildScrollView(
+        child: Container(
+          // padding: EdgeInsets.only(top: 10),
+          // color: Colors.white,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [
+            Theme.of(context).buttonColor,
+            Theme.of(context).accentColor,
+            Theme.of(context).primaryColorDark,
+            Theme.of(context).primaryColorLight,
+            Theme.of(context).primaryColor
+          ], begin: Alignment.bottomCenter, end: Alignment.topCenter)
+              // image: DecorationImage(
+              //   image: AssetImage('assets/background.png'),
+              //   fit: BoxFit.fill,
+              //   // opacity: 1,
+              // ),
+              ),
           child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 20),
+                SizedBox(
+                  height: 20,
+                ),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
@@ -135,7 +173,7 @@ class _MainPageState extends State<MainPage> {
                       width: 110,
                       decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
-                          color: Color(0xFFFFA31A),
+                          color: Theme.of(context).accentColor,
                           borderRadius: BorderRadius.circular(5)),
                       child: const Text(
                         'Guide',
@@ -162,7 +200,7 @@ class _MainPageState extends State<MainPage> {
                         fontSize: 20,
                         fontFamily: 'Alkatra',
                         fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(217, 255, 255, 255),
+                        color: Color(0xFF9E4784),
                         wordSpacing: 1.5,
                         letterSpacing: 0),
                   ),
@@ -183,8 +221,8 @@ class _MainPageState extends State<MainPage> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(40),
-                          color: Color(0xFFFFA31A),
+                          borderRadius: BorderRadius.circular(20),
+                          color: Color(0xFFD27685),
                         ),
                         child: const Text(
                           'Search',
@@ -210,23 +248,25 @@ class _MainPageState extends State<MainPage> {
           return Container(
             height: MediaQuery.of(context).size.height * 0.4,
             decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
+                color: Theme.of(context).primaryColorLight.withOpacity(0.85),
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(35),
-                border: Border.all(color: Color(0xFFFFA31A), width: 4)),
+                border: Border.all(color: Color(0xFF66347F), width: 2)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // const SizedBox(height: 200),
                 ElevatedButton(
                     style: ButtonStyle(
+                        shadowColor:
+                            MaterialStatePropertyAll(Colors.transparent),
                         backgroundColor:
                             MaterialStatePropertyAll(Colors.transparent)),
                     onPressed: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Searchscreen(),
+                            builder: (context) => Movies(),
                           ));
                     },
                     child: Container(
@@ -235,8 +275,8 @@ class _MainPageState extends State<MainPage> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(40),
-                          color: Color(0xFFFFA31A),
+                          borderRadius: BorderRadius.circular(20),
+                          color: Theme.of(context).accentColor,
                         ),
                         child: const Text(
                           'Movies',
@@ -257,7 +297,7 @@ class _MainPageState extends State<MainPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Searchscreen(),
+                            builder: (context) => Series(),
                           ));
                     },
                     child: Container(
@@ -266,8 +306,8 @@ class _MainPageState extends State<MainPage> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(40),
-                          color: Color(0xFFFFA31A),
+                          borderRadius: BorderRadius.circular(20),
+                          color: Theme.of(context).accentColor,
                         ),
                         child: const Text(
                           'Web-Series',

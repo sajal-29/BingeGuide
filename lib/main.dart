@@ -1,14 +1,18 @@
 import 'package:binge_guide/Screens/MainPage.dart';
-import 'package:binge_guide/Screens/SearchScreen.dart';
-import 'package:binge_guide/Screens/homePage.dart';
-import 'package:binge_guide/utilities/MovieHolder.dart';
+import 'package:binge_guide/Screens/SearchMovie.dart';
+import 'package:binge_guide/Screens/login_register.dart';
+import 'package:binge_guide/provider/favorite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import './widget_tree.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -17,10 +21,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: "BingeGuide",
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: ((context) => favoriteProvider()))
+      ],
+      child: MaterialApp(
+        theme: ThemeData(
+            primaryColorLight: Color(0xFF37306B),
+            primaryColorDark: Color(0xFF66347F),
+            buttonColor: Color(0xFF9E4784),
+            accentColor: Color(0xFFD27685)),
+        title: "BingeGuide",
+        debugShowCheckedModeBanner: false,
+        home: WidgetTree(),
+      ),
     );
   }
 }
